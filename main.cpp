@@ -1,19 +1,19 @@
 #include <iostream>
 #include <vector>
+#include <limits>    // for std::numeric_limits
+#include <string>    // for std::string
 using namespace std;
 
 class TicTacToe {
 private:
-    int size;                        // board dimension (N)
-    vector<vector<char>> board;      // dynamic N×N board
+    int size;                        
+    vector<vector<char>> board;      
     char currentPlayer;
 
 public:
-    // Constructor initializes size and fills the board with spaces
     TicTacToe(int n) 
       : size(n), board(n, vector<char>(n, ' ')), currentPlayer('X') {}
 
-    // Display the current board
     void displayBoard() {
         cout << "\nCurrent Board:\n";
         for (int i = 0; i < size; ++i) {
@@ -24,62 +24,44 @@ public:
             }
             cout << "\n";
             if (i < size - 1) {
+                // build a line of dashes of the correct width
                 cout << string(size * 4 - 3, '-') << "\n";
             }
         }
         cout << endl;
     }
 
-    // Check if currentPlayer has N in a row
     bool checkWin() {
-        // Check rows
+        // rows
         for (int i = 0; i < size; ++i) {
-            bool rowWin = true;
-            for (int j = 0; j < size; ++j) {
-                if (board[i][j] != currentPlayer) {
-                    rowWin = false;
-                    break;
-                }
-            }
-            if (rowWin) return true;
+            bool win = true;
+            for (int j = 0; j < size; ++j)
+                if (board[i][j] != currentPlayer) { win = false; break; }
+            if (win) return true;
         }
-        // Check columns
+        // columns
         for (int j = 0; j < size; ++j) {
-            bool colWin = true;
-            for (int i = 0; i < size; ++i) {
-                if (board[i][j] != currentPlayer) {
-                    colWin = false;
-                    break;
-                }
-            }
-            if (colWin) return true;
+            bool win = true;
+            for (int i = 0; i < size; ++i)
+                if (board[i][j] != currentPlayer) { win = false; break; }
+            if (win) return true;
         }
-        // Check main diagonal
+        // main diagonal
         bool diag1 = true;
-        for (int i = 0; i < size; ++i) {
-            if (board[i][i] != currentPlayer) {
-                diag1 = false;
-                break;
-            }
-        }
+        for (int i = 0; i < size; ++i)
+            if (board[i][i] != currentPlayer) { diag1 = false; break; }
         if (diag1) return true;
-        // Check anti-diagonal
+        // anti-diagonal
         bool diag2 = true;
-        for (int i = 0; i < size; ++i) {
-            if (board[i][size - 1 - i] != currentPlayer) {
-                diag2 = false;
-                break;
-            }
-        }
+        for (int i = 0; i < size; ++i)
+            if (board[i][size - 1 - i] != currentPlayer) { diag2 = false; break; }
         return diag2;
     }
 
-    // If there's any empty cell, it's not a draw yet
     bool checkDraw() {
         for (int i = 0; i < size; ++i)
             for (int j = 0; j < size; ++j)
-                if (board[i][j] == ' ')
-                    return false;
+                if (board[i][j] == ' ') return false;
         return true;
     }
 
@@ -87,7 +69,6 @@ public:
         currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
     }
 
-    // Ask for a move 1..size*size, map to row/col
     bool takeInput() {
         int position;
         cout << "Player " << currentPlayer 
@@ -110,12 +91,10 @@ public:
         return true;
     }
 
-    // Main game loop
     void playGame() {
         while (true) {
             displayBoard();
             if (!takeInput()) continue;
-
             if (checkWin()) {
                 displayBoard();
                 cout << "Player " << currentPlayer << " wins!\n";
